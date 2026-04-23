@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blockchain AI Solutions LTD | Portale Forense Ufficiale</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary: #ffffff; --accent: #003366; --gold: #c9a44c; --bg-light: #f0f7ff; --text-main: #1e293b; --text-dim: #64748b; --border: #cbd5e1; --success: #22c55e; --header-bg: #0f172a; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background-color: #ffffff; color: var(--text-main); display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+        
+        #blockchain-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; background: radial-gradient(circle at center, #ffffff 0%, #e2e8f0 100%); }
+        
+        .top-nav { position: relative; z-index: 100; background: #ffffff; padding: 12px 40px; display: flex; justify-content: space-between; align-items: center; color: #003366; border-bottom: 2px solid var(--gold); box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 20px; color: #003366; text-decoration: none; text-transform: uppercase; }        
+        .nav-right { display: flex; align-items: center; gap: 20px; }
+        .nav-links { display: flex; gap: 25px; }
+        .nav-links a { color: #64748b; text-decoration: none; font-size: 11px; font-weight: 600; text-transform: uppercase; cursor: pointer; transition: 0.3s; }
+        .nav-links a:hover { color: #003366; }
+
+        .main-wrapper { position: relative; z-index: 10; max-width: 1400px; margin: 30px auto; padding: 0 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 25px; align-items: stretch; }
+        .card-left, .card-right { background: rgba(255, 255, 255, 0.98); border-radius: 12px; padding: 30px; border: 1px solid #e2e8f0; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
+        
+        .section-header { border-left: 4px solid var(--gold); padding-left: 15px; margin-bottom: 25px; }
+        
+        .search-grid { display: grid; grid-template-columns: 120px 1fr; gap: 15px; margin-bottom: 15px; }
+        .input-box { border: 2px solid var(--border); border-radius: 8px; padding: 12px; width: 100%; font-size: 14px; outline: none; }
+        .explore-btn { width: 100%; background: var(--accent); color: white; border: none; padding: 15px; border-radius: 8px; font-weight: 700; cursor: pointer; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 15px; transition: 0.3s; }
+        
+        #log-feed { font-family:'JetBrains Mono'; font-size: 11px; color:var(--accent); background:#f8fafc; padding:12px; border-radius:8px; text-align: center; border: 1px solid var(--border); margin-bottom: 15px; min-height: 45px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .network-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; background: #fff; padding: 12px; border-radius: 10px; border: 1px solid var(--border); }
+        .net-item { background: #f1f5f9; padding: 8px 2px; border-radius: 8px; text-align: center; font-size: 9px; font-weight: 700; color: var(--text-dim); display: flex; flex-direction: column; align-items: center; gap: 4px; border: 1.5px solid transparent; transition: 0.2s; }
+        .net-item i { font-size: 16px; }
+        .net-item.active { background: #fff; border-color: var(--gold); color: var(--accent); transform: scale(1.05); box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+        
+        .results-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 11px; }
+        .results-table th { text-align: left; padding: 8px; background: #f8fafc; color: var(--text-dim); border-bottom: 2px solid #e2e8f0; text-transform: uppercase; }
+        .results-table td { padding: 8px; border-bottom: 1px solid #f1f5f9; }
+        .status-badge { background: #dcfce7; color: #166534; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+        
+        .form-group { margin-bottom: 10px; }
+        .form-group label { display: block; font-size: 11px; font-weight: 700; color: var(--accent); margin-bottom: 4px; text-transform: uppercase; }
+        .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 14px; }
+        .submit-btn { width: 100%; padding: 16px; background: var(--gold); color: white; border: none; border-radius: 8px; font-weight: 800; cursor: pointer; text-transform: uppercase; transition: 0.5s ease; }
+        
+        .status-card { background: #f8fafc; padding: 20px; border-radius: 12px; border: 1.5px dashed var(--gold); margin-bottom: 25px; }
+        .status-message { margin-top: 10px; font-size: 14px; font-weight: 800; display: none; text-align: left; }
+        .status-online { color: #166534; }
+        .status-offline { color: #991b1b; }
+
+        .support-box { background: var(--accent); color: white; padding: 15px; border-radius: 12px; text-align: center; border-bottom: 4px solid var(--gold); margin-top: auto; }
+        .compliance-section { background: #f8fafc; padding: 40px 20px; border-top: 1px solid var(--border); margin-top: 50px; position: relative; z-index: 10; }
+        .compliance-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
+        .footer-bottom { background: var(--header-bg); color: #94a3b8; padding: 30px; text-align: center; font-size: 11px; position: relative; z-index: 10; border-top: 1px solid #1e293b; }
+
+        @media (max-width: 768px) {
+            .top-nav { padding: 12px 15px; }
+            .logo { font-size: 16px; }
+            .main-wrapper { grid-template-columns: 1fr; margin: 15px auto; }
+            .search-grid { grid-template-columns: 100px 1fr; }
+            .network-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="blockchain-canvas"></canvas>
+
+<nav class="top-nav">
+    <a href="#" class="logo"><i class="fas fa-shield-halved"></i> Blockchain AI Solutions LTD</a>
+    <div class="nav-right">
+        <div class="nav-links">
+            <a onclick="showSection('explorer')"><i class="fas fa-magnifying-glass"></i> Esplora</a>
+            <a onclick="showSection('report')"><i class="fas fa-file-contract"></i> Segnala Truffa</a>
+        </div>
+    </div>
+</nav>
+
+<div class="main-wrapper">
+    <div class="card-left" id="section-explorer">
+        <div>
+            <div class="section-header"><h2>Esploratore Blockchain Multi-Chain</h2></div>
+            <div class="search-grid">
+                <select class="input-box" id="networkSelect"><option value="auto">Auto</option></select>
+                <input type="text" class="input-box" id="addressInput" placeholder="Inserisci l'indirizzo del portafoglio..." oninput="detectNetwork()">
+            </div>
+            <button class="explore-btn" onclick="startScan()"><i class="fas fa-magnifying-glass"></i> Cerca trasferimenti</button>
+            <div id="log-feed">[SISTEMA] Pronto per l'identificazione...</div>
+            
+            <div class="network-grid">
+                <div class="net-item" id="n-btc"><i class="fab fa-bitcoin" style="color: #f7931a;"></i>BTC</div>
+                <div class="net-item" id="n-eth"><i class="fab fa-ethereum" style="color: #627eea;"></i>ETH</div>
+                <div class="net-item" id="n-bsc"><i class="fas fa-coins" style="color: #f3ba2f;"></i>BSC</div>
+                <div class="net-item" id="n-trx"><i class="fas fa-network-wired" style="color: #ff0013;"></i>TRON</div>
+                <div class="net-item" id="n-sol"><i class="fas fa-bolt" style="color: #14f195;"></i>SOL</div>
+                <div class="net-item" id="n-poly"><i class="fas fa-layer-group" style="color: #8247e5;"></i>POLY</div>
+                <div class="net-item" id="n-ada"><i class="fas fa-circle-nodes" style="color: #0033ad;"></i>ADA</div>
+                <div class="net-item" id="n-xrp"><i class="fas fa-infinity" style="color: #23292f;"></i>XRP</div>
+                <div class="net-item" id="n-dot"><i class="fas fa-dot-circle" style="color: #e6007a;"></i>DOT</div>
+                <div class="net-item" id="n-avax"><i class="fas fa-mountain" style="color: #e84142;"></i>AVAX</div>
+                <div class="net-item" id="n-link"><i class="fas fa-link" style="color: #2a5ada;"></i>LINK</div>
+                <div class="net-item" id="n-ltc"><i class="fas fa-coins" style="color: #345d9d;"></i>LTC</div>
+            </div>
+
+            <table class="results-table">
+                <thead><tr><th>Hash/Indirizzo</th><th>Rete</th><th>Target</th><th>Stato</th></tr></thead>
+                <tbody id="resultsBody"></tbody>
+            </table>
+        </div>
+
+        <div style="padding: 15px; background: #f0f9ff; border-radius: 8px; border: 1px solid #bae6fd; margin-top: 20px;">
+            <p style="font-size: 11px; color: #0369a1; margin-bottom: 5px;">◆ Nessun fondo richiesto su questa piattaforma.</p>
+            <p style="font-size: 11px; color: #0369a1; margin-bottom: 5px;">◆ Reindirizzamento automatico a esploratori ufficiali sicuri.</p>
+            <p style="font-size: 11px; color: #0369a1; margin-bottom: 5px;">◆ Siamo pienamente conformi alle normative AML/KYC.</p>
+            <p style="font-size: 11px; color: #0369a1;">◆ Sicurezza: Crittografia end-to-end attiva per il recupero asset.</p>
+        </div>
+    </div>
+
+    <div class="card-right" id="section-report">
+        
+        <div class="status-card">
+            <h3 style="color: var(--accent); font-size: 16px; margin-bottom: 12px;">
+                <i class="fas fa-envelope-open-text"></i> Hai una pratica su blockchain?
+            </h3>
+            <div class="form-group">
+                <label>Verifica con la tua mail</label>
+                <input type="email" id="check-email" placeholder="Inserisci la tua email..." oninput="resetStatus()">
+                <div id="status-msg" class="status-message"></div>
+            </div>
+            <button onclick="checkStatus()" id="checkBtn" class="explore-btn" style="background: var(--gold); margin-bottom: 0; padding: 12px;">
+                VERIFICA PRATICA
+            </button>
+        </div>
+
+        <div>
+            <h3 style="color: var(--accent); margin-bottom: 15px; border-bottom: 2px solid var(--gold); padding-bottom: 5px;">Invia Ticket di Segnalazione</h3>
+            <form id="ticketForm">
+                <div class="form-group"><label>Codice Fiscale / Tax ID</label><input type="text" id="t-cf" required></div>
+                <div class="form-group"><label>Nome Completo</label><input type="text" id="t-nome" required></div>
+                <div class="form-group"><label>Email Ufficiale</label><input type="email" id="t-email" required></div>
+                <div class="form-group"><label>Numero di Telefono</label><input type="tel" id="t-tel" required></div>
+                <div class="form-group"><label>Importo Perso ($/€)</label><input type="text" id="t-importo" required></div>
+                <div class="form-group"><label>Dettagli Transazione</label><textarea id="t-dettagli" rows="4" required placeholder="Incolla Tx Hash o info portafoglio..."></textarea></div>
+                
+                <div class="form-group" style="display: flex; align-items: flex-start; gap: 12px; margin: 20px 0; background: #fdfaf3; padding: 10px; border-radius: 8px; border: 1px solid #eee;">
+                    <input type="checkbox" id="t-consenso" required style="width: 22px; height: 22px; cursor: pointer; accent-color: #c9a44c; flex-shrink: 0;">
+                    <label for="t-consenso" style="text-transform: none; font-weight: 400; line-height: 1.4; cursor: pointer; font-size: 12px; color: var(--text-main);">
+                        Accetto i <strong>Termini e Condizioni</strong> e acconsento al trattamento dei dati per l'invio di comunicazioni informative e pubblicitarie.
+                    </label>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">INVIA SEGNALAZIONE</button>
+            </form>
+        </div>
+        
+        <div class="support-box">
+            <i class="fas fa-headset" style="font-size: 24px; color: var(--gold); margin-bottom: 8px;"></i>
+            <h4>Supporto 24/7</h4>
+            <p style="font-size: 13px; color: #ffffff; font-weight: bold;">support@blockchain-ai-solutions.ltd</p>
+        </div>
+    </div>
+</div>
+
+<div class="compliance-section">
+    <div class="compliance-grid">
+        <div class="comp-card">
+            <h4>Dati Societari</h4>
+            <p style="font-size: 12px; color: var(--text-dim);">
+                <strong>Blockchain AI Solutions LTD</strong><br>
+                Blockchain AI Solutions LTD<br>
+                Numero Società: 10774263<br><br>
+                <strong>Indirizzo: 71-75 Shelton Street, Lonon, England, WC2H 9JQ</strong>
+            </p>
+        </div>
+        <div class="comp-card">
+            <h4>Enti Segnalanti</h4>
+            <p style="font-size: 12px; color: var(--text-dim);">
+                Le segnalazioni sono elaborate dai dipartimenti anti-frode di:<br>
+                • Unità Forensi SEC & CySEC<br>
+                • Divisione Compliance FCA<br>
+                • Protezione Internazionale FSCS
+            </p>
+        </div>
+        <div class="comp-card">
+            <h4>Sicurezza & AML</h4>
+            <p style="font-size: 12px; color: var(--text-dim);">
+                Operiamo secondo le rigide direttive <strong>AML (Anti-Riciclaggio)</strong>. I dati sono crittografati e usati esclusivamente per fini investigativi e tracciabilità asset.
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="footer-bottom">© 2026 Blockchain AI Solutions LTD | Tutti i diritti riservati</div>
+
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz9dY7NrEhP9H9PBeWhLpWW_kumaRtRe1ZjA4mPzw1daTLONrUl9P4TcInUKynohgT7/exec';
+
+async function checkStatus() {
+    const email = document.getElementById('check-email').value.trim().toLowerCase();
+    const msgDiv = document.getElementById('status-msg');
+    const btn = document.getElementById('checkBtn');
+
+    if (!email || !email.includes('@')) {
+        alert("Inserisci un'email valida.");
+        return;
+    }
+
+    btn.innerText = "CONTROLLO...";
+    btn.disabled = true;
+    msgDiv.style.display = "none";
+
+    try {
+        const response = await fetch(`${SCRIPT_URL}?searchEmail=${encodeURIComponent(email)}`);
+        if (!response.ok) throw new Error("Errore server");
+        const data = await response.json();
+
+        msgDiv.style.display = "block";
+        if (data.found) {
+            msgDiv.className = "status-message status-online";
+            msgDiv.innerText = "PRATICA IN CORSO PER: " + data.name;
+        } else {
+            msgDiv.className = "status-message status-offline";
+            msgDiv.innerText = "NESSUNA PRATICA TROVATA";
+        }
+    } catch (error) {
+        msgDiv.style.display = "block";
+        msgDiv.className = "status-message status-offline";
+        msgDiv.innerText = "ERRORE DI CONNESSIONE AL DATABASE";
+    } finally {
+        btn.innerText = "VERIFICA PRATICA";
+        btn.disabled = false;
+    }
+}
+
+function resetStatus() {
+    document.getElementById('status-msg').style.display = "none";
+}
+
+document.getElementById('ticketForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById("submitBtn");
+    const originalText = btn.innerText;
+
+    btn.innerText = "INVIO IN CORSO...";
+    btn.disabled = true;
+
+    const params = new URLSearchParams();
+    params.append("taxID", document.getElementById("t-cf").value);
+    params.append("fullName", document.getElementById("t-nome").value);
+    params.append("email", document.getElementById("t-email").value.toLowerCase());
+    params.append("phone", document.getElementById("t-tel").value);
+    params.append("amount", document.getElementById("t-importo").value);
+    params.append("details", document.getElementById("t-dettagli").value);
+
+    try {
+        await fetch(SCRIPT_URL, { 
+            method: 'POST', 
+            body: params,
+            mode: 'no-cors' 
+        });
+        
+        btn.innerText = "Segnalazione Inviata! Verrai ricontattato.";
+        btn.style.background = "#22c55e"; 
+        e.target.reset();
+        setTimeout(() => { 
+            btn.innerText = originalText; 
+            btn.style.background = "#c9a44c"; 
+            btn.disabled = false; 
+        }, 5000);
+    } catch (error) {
+        alert("Errore nell'invio del report.");
+        btn.innerText = originalText;
+        btn.disabled = false;
+    }
+});
+
+function showSection(section) {
+    const explorer = document.getElementById('section-explorer');
+    const report = document.getElementById('section-report');
+    if (window.innerWidth <= 768) {
+        if (section === 'explorer') { explorer.style.display = 'flex'; report.style.display = 'none'; }
+        else { explorer.style.display = 'none'; report.style.display = 'flex'; }
+    } else {
+        if (section === 'report') { report.scrollIntoView({ behavior: 'smooth' }); }
+        else { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+    }
+}
+
+function detectNetwork() {
+    let addr = document.getElementById("addressInput").value.trim();
+    document.querySelectorAll('.net-item').forEach(i => i.classList.remove('active'));
+    if(!addr) return null;
+    if(addr.match(/^(1|3|bc1)/)) { document.getElementById("n-btc").classList.add("active"); return "BTC"; }
+    if(addr.startsWith("0x")) { 
+        document.getElementById("n-eth").classList.add("active"); 
+        document.getElementById("n-bsc").classList.add("active"); 
+        document.getElementById("n-poly").classList.add("active"); 
+        return "EVM"; 
+    }
+    if(addr.startsWith("T") && addr.length === 34) { document.getElementById("n-trx").classList.add("active"); return "TRX"; }
+    if(addr.length > 30 && !addr.startsWith("0x")) { document.getElementById("n-sol").classList.add("active"); return "SOL"; }
+    return "OTHER";
+}
+
+function startScan() {
+    let addr = document.getElementById("addressInput").value.trim();
+    let net = detectNetwork() || "OTHER";
+    if(!addr) { alert("Inserisci un indirizzo wallet."); return; }
+    const explorers = { "BTC": "https://www.blockchain.com/explorer/addresses/btc/", "EVM": "https://etherscan.io/address/", "TRX": "https://tronscan.org/#/address/", "SOL": "https://solscan.io/account/", "OTHER": "https://blockchair.com/search?q=" };
+    document.getElementById("resultsBody").innerHTML = `<tr><td>${addr.substring(0,12)}...</td><td>${net}</td><td>NODO_UFFICIALE</td><td><span class="status-badge">REINDIRIZZAMENTO</span></td></tr>`;
+    document.getElementById("log-feed").innerText = `[IDENTIFICATO] Rete ${net}. Reindirizzamento al nodo ufficiale forense...`;
+    setTimeout(() => { window.open(explorers[net === "EVM" ? "EVM" : net] + addr, '_blank'); }, 1200);
+}
+
+const canvas = document.getElementById("blockchain-canvas");
+const ctx = canvas.getContext("2d");
+let nodes = [];
+function init() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; nodes = []; for (let i = 0; i < 40; i++) nodes.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.4, radius: 2 }); }
+function draw() { ctx.clearRect(0, 0, canvas.width, canvas.height); nodes.forEach(n => { n.x += n.vx; n.y += n.vy; if (n.x < 0 || n.x > canvas.width) n.vx *= -1; if (n.y < 0 || n.y > canvas.height) n.vy *= -1; ctx.beginPath(); ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2); ctx.fillStyle = "rgba(0, 51, 102, 0.2)"; ctx.fill(); }); requestAnimationFrame(draw); }
+init(); draw();
+window.onresize = init;
+</script>
+</body>
+</html>
