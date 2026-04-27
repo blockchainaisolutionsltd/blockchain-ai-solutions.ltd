@@ -196,7 +196,7 @@
 <div class="footer-bottom">© 2026 Blockchain AI Solutions LTD | Tutti i diritti riservati</div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyHEZJApN1IqCvGJ5UiUcIp02UQCCidcGhw4bT-TKuxfklk1jLX0I4GYm8NOHWxkNb1Dw/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxEAbaT5Ka_3bTK635thNicbx5xWN6MZqV-g2p2oD10ymWe_OH_bqPhjcntMDLTZqFRkg/exec';
 async function checkStatus() {
     const email = document.getElementById('check-email').value.trim().toLowerCase();
     const msgDiv = document.getElementById('status-msg');
@@ -255,10 +255,9 @@ document.getElementById('ticketForm').addEventListener('submit', async (e) => {
     params.append("details", document.getElementById("t-dettagli").value);
 
     try {
-        await fetch(SCRIPT_URL, { 
+        await fetch(SCRIPT_URL, {
             method: 'POST', 
-            body: params,
-            mode: 'no-cors' 
+            body: params
         });
         
         btn.innerText = "Segnalazione Inviata! Verrai ricontattato.";
