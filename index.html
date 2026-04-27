@@ -121,7 +121,6 @@
     </div>
 
     <div class="card-right" id="section-report">
-        
         <div class="status-card">
             <h3 style="color: var(--accent); font-size: 16px; margin-bottom: 12px;">
                 <i class="fas fa-envelope-open-text"></i> Hai una pratica su blockchain?
@@ -172,7 +171,7 @@
             <p style="font-size: 12px; color: var(--text-dim);">
                 <strong>Blockchain AI Solutions LTD</strong><br>
                 Numero Società: 10774263<br><br>
-                <strong>Indirizzo: 71-75 Shelton Street, Lonon, England, WC2H 9JQ</strong>
+                <strong>Indirizzo: 71-75 Shelton Street, London, England, WC2H 9JQ</strong>
             </p>
         </div>
         <div class="comp-card">
@@ -196,7 +195,10 @@
 <div class="footer-bottom">© 2026 Blockchain AI Solutions LTD | Tutti i diritti riservati</div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxEAbaT5Ka_3bTK635thNicbx5xWN6MZqV-g2p2oD10ymWe_OH_bqPhjcntMDLTZqFRkg/exec';
+// URL DEFINITIVO AGGIORNATO
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyRjXaMhCaNQLJJ6G5eMGTiP62pSCxXlVkLYHpRn7BaUy5T8PhGXXLfNaxRn3aenf2kdQ/exec';
+
+// FUNZIONE VERIFICA PRATICA (doGet)
 async function checkStatus() {
     const email = document.getElementById('check-email').value.trim().toLowerCase();
     const msgDiv = document.getElementById('status-msg');
@@ -213,16 +215,15 @@ async function checkStatus() {
 
     try {
         const response = await fetch(`${SCRIPT_URL}?searchEmail=${encodeURIComponent(email)}`);
-        if (!response.ok) throw new Error("Errore server");
         const data = await response.json();
 
         msgDiv.style.display = "block";
         if (data.found) {
             msgDiv.className = "status-message status-online";
-            msgDiv.innerText = "PRATICA IN CORSO PER: " + data.name;
+            msgDiv.innerHTML = `<i class="fas fa-check-circle"></i> PRATICA IN CORSO PER: ${data.name}`;
         } else {
             msgDiv.className = "status-message status-offline";
-            msgDiv.innerText = "NESSUNA PRATICA TROVATA";
+            msgDiv.innerHTML = `<i class="fas fa-times-circle"></i> NESSUNA PRATICA TROVATA`;
         }
     } catch (error) {
         msgDiv.style.display = "block";
@@ -234,10 +235,7 @@ async function checkStatus() {
     }
 }
 
-function resetStatus() {
-    document.getElementById('status-msg').style.display = "none";
-}
-
+// FUNZIONE INVIO TICKET (doPost)
 document.getElementById('ticketForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = document.getElementById("submitBtn");
@@ -257,8 +255,8 @@ document.getElementById('ticketForm').addEventListener('submit', async (e) => {
     try {
         await fetch(SCRIPT_URL, {
             method: 'POST', 
-            body: params
-            mode: 'no-cors'
+            body: params,
+            mode: 'no-cors' // Cruciale per bypassare CORS con Google Apps Script
         });
         
         btn.innerText = "Segnalazione Inviata! Verrai ricontattato.";
@@ -275,6 +273,9 @@ document.getElementById('ticketForm').addEventListener('submit', async (e) => {
         btn.disabled = false;
     }
 });
+
+// UTILITY UI
+function resetStatus() { document.getElementById('status-msg').style.display = "none"; }
 
 function showSection(section) {
     const explorer = document.getElementById('section-explorer');
@@ -314,6 +315,7 @@ function startScan() {
     setTimeout(() => { window.open(explorers[net === "EVM" ? "EVM" : net] + addr, '_blank'); }, 1200);
 }
 
+// CANVAS ANIMATION
 const canvas = document.getElementById("blockchain-canvas");
 const ctx = canvas.getContext("2d");
 let nodes = [];
@@ -325,4 +327,3 @@ window.onresize = init;
 </body>
 </html>
 
-senza fare altri casini me li fai lei portandomi il codice completo e aggiornato
