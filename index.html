@@ -1,175 +1,128 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blockchain AI Solutions LTD | Portale Forense Ufficiale</title>
-    <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root { --primary: #ffffff; --accent: #003366; --gold: #c9a44c; --bg-light: #f0f7ff; --text-main: #1e293b; --text-dim: #64748b; --border: #cbd5e1; --success: #22c55e; --header-bg: #0f172a; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background-color: #ffffff; color: var(--text-main); display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
-        
-        #blockchain-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; background: radial-gradient(circle at center, #ffffff 0%, #e2e8f0 100%); }
-        
-        .top-nav { position: relative; z-index: 100; background: #ffffff; padding: 12px 40px; display: flex; justify-content: space-between; align-items: center; color: #003366; border-bottom: 2px solid var(--gold); box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 20px; color: #003366; text-decoration: none; text-transform: uppercase; }        
-        .nav-right { display: flex; align-items: center; gap: 20px; }
-        .nav-links { display: flex; gap: 25px; }
-        .nav-links a { color: #64748b; text-decoration: none; font-size: 11px; font-weight: 600; text-transform: uppercase; cursor: pointer; transition: 0.3s; }
-        .nav-links a:hover { color: #003366; }
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwvecIP9WLpbAf8mjjM48YPyutfu0x5bjWs2kt50VEQMFRWDVyPYEhkyvwh3dgWR6WsVA/exec';
 
-        .main-wrapper { position: relative; z-index: 10; max-width: 1400px; margin: 30px auto; padding: 0 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 25px; align-items: stretch; }
-        .card-left, .card-right { background: rgba(255, 255, 255, 0.98); border-radius: 12px; padding: 30px; border: 1px solid #e2e8f0; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
-        
-        .section-header { border-left: 4px solid var(--gold); padding-left: 15px; margin-bottom: 25px; }
-        
-        .search-grid { display: grid; grid-template-columns: 120px 1fr; gap: 15px; margin-bottom: 15px; }
-        .input-box { border: 2px solid var(--border); border-radius: 8px; padding: 12px; width: 100%; font-size: 14px; outline: none; }
-        .explore-btn { width: 100%; background: var(--accent); color: white; border: none; padding: 15px; border-radius: 8px; font-weight: 700; cursor: pointer; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 15px; transition: 0.3s; }
-        
-        #log-feed { font-family:'JetBrains Mono'; font-size: 11px; color:var(--accent); background:#f8fafc; padding:12px; border-radius:8px; text-align: center; border: 1px solid var(--border); margin-bottom: 15px; min-height: 45px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
-        .network-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; background: #fff; padding: 12px; border-radius: 10px; border: 1px solid var(--border); }
-        .net-item { background: #f1f5f9; padding: 8px 2px; border-radius: 8px; text-align: center; font-size: 9px; font-weight: 700; color: var(--text-dim); display: flex; flex-direction: column; align-items: center; gap: 4px; border: 1.5px solid transparent; transition: 0.2s; }
-        .net-item i { font-size: 16px; }
-        .net-item.active { background: #fff; border-color: var(--gold); color: var(--accent); transform: scale(1.05); box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
-        
-        .results-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 11px; }
-        .results-table th { text-align: left; padding: 8px; background: #f8fafc; color: var(--text-dim); border-bottom: 2px solid #e2e8f0; text-transform: uppercase; }
-        .results-table td { padding: 8px; border-bottom: 1px solid #f1f5f9; }
-        .status-badge { background: #dcfce7; color: #166534; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
-        
-        .form-group { margin-bottom: 10px; }
-        .form-group label { display: block; font-size: 11px; font-weight: 700; color: var(--accent); margin-bottom: 4px; text-transform: uppercase; }
-        .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 14px; }
-        .submit-btn { width: 100%; padding: 16px; background: var(--gold); color: white; border: none; border-radius: 8px; font-weight: 800; cursor: pointer; text-transform: uppercase; transition: 0.5s ease; }
-        
-        .status-card { background: #f8fafc; padding: 20px; border-radius: 12px; border: 1.5px dashed var(--gold); margin-bottom: 25px; }
-        .status-message { margin-top: 10px; font-size: 14px; font-weight: 800; display: none; text-align: left; }
-        .status-online { color: #166534; }
-        .status-offline { color: #991b1b; }
+async function checkStatus() {
+    const email = document.getElementById('check-email').value.trim().toLowerCase();
+    const msgDiv = document.getElementById('status-msg');
+    const btn = document.getElementById('checkBtn');
 
-        .support-box { background: var(--accent); color: white; padding: 15px; border-radius: 12px; text-align: center; border-bottom: 4px solid var(--gold); margin-top: auto; }
-        .compliance-section { background: #f8fafc; padding: 40px 20px; border-top: 1px solid var(--border); margin-top: 50px; position: relative; z-index: 10; }
-        .compliance-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
-        .footer-bottom { background: var(--header-bg); color: #94a3b8; padding: 30px; text-align: center; font-size: 11px; position: relative; z-index: 10; border-top: 1px solid #1e293b; }
+    if (!email || !email.includes('@')) {
+        alert("Inserisci un'email valida.");
+        return;
+    }
 
-        @media (max-width: 768px) {
-            .top-nav { padding: 12px 15px; }
-            .logo { font-size: 16px; }
-            .main-wrapper { grid-template-columns: 1fr; margin: 15px auto; }
-            .search-grid { grid-template-columns: 100px 1fr; }
-            .network-grid { grid-template-columns: 1fr 1fr; }
-            .results-table { font-size: 10px; }
-            .footer-bottom { font-size: 10px; }
+    btn.innerText = "CONTROLLO...";
+    btn.disabled = true;
+    msgDiv.style.display = "none";
+
+    try {
+        const response = await fetch(`${SCRIPT_URL}?searchEmail=${encodeURIComponent(email)}`);
+        if (!response.ok) throw new Error("Errore server");
+        const data = await response.json();
+
+        msgDiv.style.display = "block";
+        if (data.found) {
+            msgDiv.className = "status-message status-online";
+            msgDiv.innerText = "PRATICA IN CORSO PER: " + data.name;
+        } else {
+            msgDiv.className = "status-message status-offline";
+            msgDiv.innerText = "NESSUNA PRATICA TROVATA";
         }
-    </style>
-</head>
-<body>
-    <div id="blockchain-canvas"></div>
-    <div class="top-nav">
-        <a href="#" class="logo"><i class="fa-solid fa-diamond"></i> Blockchain AI Solutions</a>
-        <div class="nav-right">
-            <div class="nav-links">
-                <a href="#">Home</a>
-                <a href="#">About</a>
-                <a href="#">Services</a>
-                <a href="#">Contact</a>
-            </div>
-        </div>
-    </div>
+    } catch (error) {
+        msgDiv.style.display = "block";
+        msgDiv.className = "status-message status-offline";
+        msgDiv.innerText = "ERRORE DI CONNESSIONE AL DATABASE";
+    } finally {
+        btn.innerText = "VERIFICA PRATICA";
+        btn.disabled = false;
+    }
+}
 
-    <div class="main-wrapper">
-        <div class="card-left">
-            <div class="section-header">
-                <h3>Search Forensic Data</h3>
-            </div>
-            <div id="log-feed">Caricamento...</div>
-            <div class="search-grid">
-                <input type="text" class="input-box" placeholder="Enter search query...">
-                <button class="explore-btn">Explore</button>
-            </div>
-            <div class="network-grid">
-                <div class="net-item active"><i class="fa fa-cogs"></i> Blockchain</div>
-                <div class="net-item"><i class="fa fa-database"></i> Database</div>
-                <div class="net-item"><i class="fa fa-file"></i> Documents</div>
-                <div class="net-item"><i class="fa fa-server"></i> Servers</div>
-            </div>
-            <table class="results-table">
-                <thead>
-                    <tr>
-                        <th>File Name</th>
-                        <th>Status</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Document123.pdf</td>
-                        <td><span class="status-badge">Verified</span></td>
-                        <td>2023-03-15</td>
-                    </tr>
-                    <tr>
-                        <td>BlockchainTX01.dat</td>
-                        <td><span class="status-badge">Pending</span></td>
-                        <td>2023-03-16</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+function resetStatus() {
+    document.getElementById('status-msg').style.display = "none";
+}
 
-        <div class="card-right">
-            <div class="section-header">
-                <h3>Submit Data</h3>
-            </div>
-            <form id="data-form">
-                <div class="form-group">
-                    <label for="name">Full Name</label>
-                    <input type="text" id="name" name="name" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email Address</label>
-                    <input type="email" id="email" name="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="message">Message</label>
-                    <textarea id="message" name="message" rows="5" required></textarea>
-                </div>
-                <button type="submit" class="submit-btn">Submit</button>
-            </form>
-            <div id="status-card" class="status-card">
-                <span id="status-message" class="status-message"></span>
-            </div>
-        </div>
-    </div>
+document.getElementById('ticketForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById("submitBtn");
+    const originalText = btn.innerText;
 
-    <div class="support-box">
-        <h4>Need Support? Contact Us</h4>
-    </div>
+    btn.innerText = "INVIO IN CORSO...";
+    btn.disabled = true;
 
-    <div class="compliance-section">
-        <div class="compliance-grid">
-            <div class="compliance-card">
-                <h3>Forensic Standards</h3>
-                <p>Our forensic solutions adhere to global standards to ensure the integrity of evidence.</p>
-            </div>
-            <div class="compliance-card">
-                <h3>Legal Compliance</h3>
-                <p>We guarantee compliance with applicable laws and regulations in all data handling processes.</p>
-            </div>
-        </div>
-    </div>
+    const params = new URLSearchParams();
+    params.append("taxID", document.getElementById("t-cf").value);
+    params.append("fullName", document.getElementById("t-nome").value);
+    params.append("email", document.getElementById("t-email").value.toLowerCase());
+    params.append("phone", document.getElementById("t-tel").value);
+    params.append("amount", document.getElementById("t-importo").value);
+    params.append("details", document.getElementById("t-dettagli").value);
 
-    <div class="footer-bottom">
-        <p>&copy; 2023 Blockchain AI Solutions LTD. All Rights Reserved.</p>
-    </div>
+    try {
+        await fetch(SCRIPT_URL, { 
+            method: 'POST', 
+            body: params,
+            mode: 'no-cors' 
+        });
+        
+        btn.innerText = "Segnalazione Inviata! Verrai ricontattato.";
+        btn.style.background = "#22c55e"; 
+        e.target.reset();
+        setTimeout(() => { 
+            btn.innerText = originalText; 
+            btn.style.background = "#c9a44c"; 
+            btn.disabled = false; 
+        }, 5000);
+    } catch (error) {
+        alert("Errore nell'invio del report.");
+        btn.innerText = originalText;
+        btn.disabled = false;
+    }
+});
 
-    <script>
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzGdssjHiVJ6c3ANWnXdYzB3twVCd-2OpO_EhwXCM_jTdf8S0hSr7JFPnoKKaMi1J8Kpg/exec';
-        // Altri script qui
-    </script>
-</body>
-</html>
+function showSection(section) {
+    const explorer = document.getElementById('section-explorer');
+    const report = document.getElementById('section-report');
+    if (window.innerWidth <= 768) {
+        if (section === 'explorer') { explorer.style.display = 'flex'; report.style.display = 'none'; }
+        else { explorer.style.display = 'none'; report.style.display = 'flex'; }
+    } else {
+        if (section === 'report') { report.scrollIntoView({ behavior: 'smooth' }); }
+        else { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+    }
+}
+
+function detectNetwork() {
+    let addr = document.getElementById("addressInput").value.trim();
+    document.querySelectorAll('.net-item').forEach(i => i.classList.remove('active'));
+    if(!addr) return null;
+    if(addr.match(/^(1|3|bc1)/)) { document.getElementById("n-btc").classList.add("active"); return "BTC"; }
+    if(addr.startsWith("0x")) { 
+        document.getElementById("n-eth").classList.add("active"); 
+        document.getElementById("n-bsc").classList.add("active"); 
+        document.getElementById("n-poly").classList.add("active"); 
+        return "EVM"; 
+    }
+    if(addr.startsWith("T") && addr.length === 34) { document.getElementById("n-trx").classList.add("active"); return "TRX"; }
+    if(addr.length > 30 && !addr.startsWith("0x")) { document.getElementById("n-sol").classList.add("active"); return "SOL"; }
+    return "OTHER";
+}
+
+function startScan() {
+    let addr = document.getElementById("addressInput").value.trim();
+    let net = detectNetwork() || "OTHER";
+    if(!addr) { alert("Inserisci un indirizzo wallet."); return; }
+    const explorers = { "BTC": "https://www.blockchain.com/explorer/addresses/btc/", "EVM": "https://etherscan.io/address/", "TRX": "https://tronscan.org/#/address/", "SOL": "https://solscan.io/account/", "OTHER": "https://blockchair.com/search?q=" };
+    document.getElementById("resultsBody").innerHTML = `<tr><td>${addr.substring(0,12)}...</td><td>${net}</td><td>NODO_UFFICIALE</td><td><span class="status-badge">REINDIRIZZAMENTO</span></td></tr>`;
+    document.getElementById("log-feed").innerText = `[IDENTIFICATO] Rete ${net}. Reindirizzamento al nodo ufficiale forense...`;
+    setTimeout(() => { window.open(explorers[net === "EVM" ? "EVM" : net] + addr, '_blank'); }, 1200);
+}
+
+const canvas = document.getElementById("blockchain-canvas");
+const ctx = canvas.getContext("2d");
+let nodes = [];
+function init() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; nodes = []; for (let i = 0; i < 40; i++) nodes.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.4, radius: 2 }); }
+function draw() { ctx.clearRect(0, 0, canvas.width, canvas.height); nodes.forEach(n => { n.x += n.vx; n.y += n.vy; if (n.x < 0 || n.x > canvas.width) n.vx *= -1; if (n.y < 0 || n.y > canvas.height) n.vy *= -1; ctx.beginPath(); ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2); ctx.fillStyle = "rgba(0, 51, 102, 0.2)"; ctx.fill(); }); requestAnimationFrame(draw); }
+init(); draw();
+window.onresize = init;
+</script>
