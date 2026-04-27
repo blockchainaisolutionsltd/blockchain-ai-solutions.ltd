@@ -165,10 +165,13 @@
         <div class="badge">✔ REPORT VERIFICATO</div>
         <h2>Riepilogo Asset</h2>
 
+        <!-- Email dinamica -->
         <div class="email-box" id="emailDisplay">Caricamento utente...</div>
 
+        <!-- Indirizzo Blockchain -->
         <div class="address">TFq8GqCTiJA1PAnCJjtqDMHTRAsZgKNaYk</div>
 
+        <!-- Riepilogo Asset -->
         <div class="row">
             <div class="asset">
                 <img src="https://assets.coingecko.com/coins/images/325/small/Tether.png" alt="USDT">
@@ -245,12 +248,4 @@
         if (userEmail) {
             // Se l'email è presente nell'URL, la mostra
             document.getElementById('emailDisplay').textContent = userEmail;
-        } else {
-            // Se apri il link senza parametro (test), mostra questo
-            document.getElementById('emailDisplay').textContent = "Utente Blockchain Verificato";
-        }
-    }
-</script>
-
-</body>
-</html>
+        } else
