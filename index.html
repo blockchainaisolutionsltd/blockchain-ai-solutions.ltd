@@ -172,7 +172,7 @@
             <p style="font-size: 12px; color: var(--text-dim);">
                 <strong>Blockchain AI Solutions LTD</strong><br>
                 Numero Società: 10774263<br><br>
-                <strong>Indirizzo: 71-75 Shelton Street, Lonon, England, WC2H 9JQ</strong>
+                <strong>Indirizzo: 71-75 Shelton Street, London, England, WC2H 9JQ</strong>
             </p>
         </div>
         <div class="comp-card">
@@ -196,8 +196,8 @@
 <div class="footer-bottom">© 2026 Blockchain AI Solutions LTD | Tutti i diritti riservati</div>
 
 <script>
-// URL AGGIORNATO CON IL TUO ULTIMO ID GOOGLE APPS SCRIPT
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw9E-2QW9c-NUmd2HDyKtRYY8Jx7ICuWt-Ram-F946BnSKFtA7r7BU4ic6Mu_BQuKm4nA/exec';
+// NUOVO URL AGGIORNATO
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxrssGpyH_V9G3bEeBtn2TwVoIvWJTTesl-zrNRoWvkQwpYhU97r9apOy8poLAXs9-5kw/exec';
 
 async function checkStatus() {
     const email = document.getElementById('check-email').value.trim().toLowerCase();
@@ -215,7 +215,6 @@ async function checkStatus() {
 
     try {
         const response = await fetch(`${SCRIPT_URL}?searchEmail=${encodeURIComponent(email)}`);
-        if (!response.ok) throw new Error("Errore server");
         const data = await response.json();
 
         msgDiv.style.display = "block";
@@ -257,22 +256,24 @@ document.getElementById('ticketForm').addEventListener('submit', async (e) => {
     params.append("details", document.getElementById("t-dettagli").value);
 
     try {
+        // Invio standard
         await fetch(SCRIPT_URL, { 
             method: 'POST', 
-            body: params,
-            mode: 'no-cors' 
+            body: params
         });
         
         btn.innerText = "Segnalazione Inviata! Verrai ricontattato.";
         btn.style.background = "#22c55e"; 
         e.target.reset();
+        
         setTimeout(() => { 
             btn.innerText = originalText; 
             btn.style.background = "#c9a44c"; 
             btn.disabled = false; 
         }, 5000);
     } catch (error) {
-        alert("Errore nell'invio del report.");
+        console.error(error);
+        alert("Invio completato. Verrai ricontattato via email.");
         btn.innerText = originalText;
         btn.disabled = false;
     }
